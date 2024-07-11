@@ -1,0 +1,16 @@
+{
+    "options": {
+      "paths": {
+        "root": "."
+      }
+    },
+    "data": {
+      "miners": {
+        "mbtiles": "miners.mbtiles"
+      },
+      "hex_grid": {
+        "mbtiles": "hex_grid.mbtiles"
+      }
+    }
+  }
+  

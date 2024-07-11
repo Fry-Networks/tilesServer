@@ -1,0 +1,21 @@
+{
+  "name": "tilesserver",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^20.14.10"
+  },
+  "dependencies": {
+    "@turf/turf": "^7.0.0",
+    "dotenv": "^16.4.5",
+    "h3-js": "^4.1.0",
+    "mongoose": "^8.5.0"
+  }
+}
