@@ -1,7 +1,10 @@
-import { exec } from "child_process";
+import { ChildProcess, exec, execSync } from "child_process";
 import { join } from "path";
 import clientPromise from "./db/mongoclient";
 import fs from "fs";
+
+let tileserverProcess: ChildProcess | null = null;  // To keep track of the tileserver-gl process
+
 // Define the paths for the scripts and files
 const hexGridScript = join(__dirname, "generateGrid.js");
 const geojsonFile = join(__dirname, "hex_grid.geojson");
@@ -27,7 +30,7 @@ const getMinerPoints = async () => {
     const collection = db.collection("devices");
     //find miners with a position field
     const miners = await collection.find({ position: { $exists: true } }).toArray();
-    console.log(miners)
+    console.log(miners);
     //create a geojson file with the miners
     const geojson = {
         type: "FeatureCollection",
@@ -44,7 +47,6 @@ const getMinerPoints = async () => {
     };
     fs.writeFileSync("miners.geojson", JSON.stringify(geojson, null, 2));
     console.log("Miners GeoJSON generated successfully.");
-
 };
 
 const runHexGridScript = async () => {
@@ -72,11 +74,40 @@ const convertToMbtiles = async () => {
     }
 };
 
+const stopTileServer = () => {
+    if (tileserverProcess) {
+        console.log("Stopping previous tileserver-gl process...");
+        tileserverProcess.kill();
+        tileserverProcess = null;
+    }
+};
+
+const startTileServer = async () => {
+    stopTileServer();  // Stop any previous instance of tileserver-gl
+    console.log("Starting tileserver-gl...");
+    tileserverProcess = exec("tileserver-gl config.json", (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error starting tileserver-gl: ${error.message}`);
+            return;
+        }
+        console.log(stdout);
+        if (stderr) {
+            console.error(`tileserver-gl stderr: ${stderr}`);
+        }
+    });
+};
+
 // Run the entire update process
 const runUpdateProcess = async () => {
     await getMinerPoints();
     await runHexGridScript();
     await convertToMbtiles();
+    console.log("Update process completed successfully.");
+    await startTileServer();
 };
 
+// Initial run
 runUpdateProcess();
+
+// Schedule the update process to run every 10 minutes
+setInterval(runUpdateProcess, 10 * 60 * 1000);

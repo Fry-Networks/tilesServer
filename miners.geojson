@@ -26,6 +26,19 @@
       "properties": {
         "name": "$FRY Indoor Wildlife Camera Miner"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.9880962371826174,
+          48.665514266085225
+        ]
+      },
+      "properties": {
+        "name": "$FRY High-End Weather Miner"
+      }
     }
   ]
 }

@@ -22,7 +22,7 @@ function createHexGrid(pointsGeoJSON: any, resolution: number) {
         const hexBoundary = h3.cellToBoundary(hexId, true);
         console.log(hexBoundary)
         const hexPolygon = turf.polygon([hexBoundary]);
-        return turf.feature(hexPolygon.geometry);
+        return turf.feature(hexPolygon.geometry, { id: hexId });
     });
 
     // Create a FeatureCollection with hexagon geometries
@@ -31,7 +31,7 @@ function createHexGrid(pointsGeoJSON: any, resolution: number) {
 }
 
 // Adjust the resolution as needed
-const resolution = 7;
+const resolution = 8;
 const hexGeoJSON = createHexGrid(pointsGeoJSON, resolution);
 console.log(hexGeoJSON)
 // Save hex grid to a GeoJSON file

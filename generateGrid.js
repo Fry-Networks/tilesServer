@@ -22,10 +22,23 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const h3 = __importStar(require("h3-js"));
 const fs = __importStar(require("fs"));
 const turf = __importStar(require("@turf/turf"));
+const mongoclient_1 = __importDefault(require("./db/mongoclient"));
 // Load your GeoJSON file
 const pointsGeoJSON = JSON.parse(fs.readFileSync("miners.geojson", "utf8"));
 // Function to create hex grid
@@ -40,18 +53,34 @@ function createHexGrid(pointsGeoJSON, resolution) {
     console.log(hexSet);
     // Create hexagon geometries
     const hexFeatures = Array.from(hexSet).map((hexId) => {
-        const hexBoundary = h3.cellToBoundary(hexId, true);
-        console.log(hexBoundary);
+        const hexBoundary = h3.cellToBoundary(hexId, true).map(([lat, lng]) => [lng, lat]);
         const hexPolygon = turf.polygon([hexBoundary]);
-        return turf.feature(hexPolygon.geometry);
+        return turf.feature(hexPolygon.geometry, { id: hexId });
     });
     // Create a FeatureCollection with hexagon geometries
     const hexGeoJSON = turf.featureCollection(hexFeatures);
     return hexGeoJSON;
 }
+// Function to update miners with hex ID
+const updateMinersWithHexId = (resolution) => __awaiter(void 0, void 0, void 0, function* () {
+    const client = yield mongoclient_1.default;
+    const db = client.db("main");
+    const collection = db.collection("devices");
+    // Find miners with a position field
+    const miners = yield collection.find({ position: { $exists: true } }).toArray();
+    // Update each miner with the hex ID
+    for (const miner of miners) {
+        const { lng, lat } = miner.position;
+        const hexId = h3.latLngToCell(lat, lng, resolution);
+        yield collection.updateOne({ _id: miner._id }, { $set: { hexId } });
+    }
+    console.log("Miners updated with hex IDs successfully.");
+});
 // Adjust the resolution as needed
-const resolution = 7;
+const resolution = 8;
 const hexGeoJSON = createHexGrid(pointsGeoJSON, resolution);
 console.log(hexGeoJSON);
 // Save hex grid to a GeoJSON file
 fs.writeFileSync("hex_grid.geojson", JSON.stringify(hexGeoJSON, null, 2));
+// Update miners with hex IDs
+updateMinersWithHexId(resolution).catch(console.error);

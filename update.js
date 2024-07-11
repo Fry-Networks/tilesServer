@@ -16,6 +16,7 @@ const child_process_1 = require("child_process");
 const path_1 = require("path");
 const mongoclient_1 = __importDefault(require("./db/mongoclient"));
 const fs_1 = __importDefault(require("fs"));
+let tileserverProcess = null; // To keep track of the tileserver-gl process
 // Define the paths for the scripts and files
 const hexGridScript = (0, path_1.join)(__dirname, "generateGrid.js");
 const geojsonFile = (0, path_1.join)(__dirname, "hex_grid.geojson");
@@ -82,10 +83,36 @@ const convertToMbtiles = () => __awaiter(void 0, void 0, void 0, function* () {
         console.error("Error creating MBTiles file:", error);
     }
 });
+const stopTileServer = () => {
+    if (tileserverProcess) {
+        console.log("Stopping previous tileserver-gl process...");
+        tileserverProcess.kill();
+        tileserverProcess = null;
+    }
+};
+const startTileServer = () => __awaiter(void 0, void 0, void 0, function* () {
+    stopTileServer(); // Stop any previous instance of tileserver-gl
+    console.log("Starting tileserver-gl...");
+    tileserverProcess = (0, child_process_1.exec)("tileserver-gl config.json", (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error starting tileserver-gl: ${error.message}`);
+            return;
+        }
+        console.log(stdout);
+        if (stderr) {
+            console.error(`tileserver-gl stderr: ${stderr}`);
+        }
+    });
+});
 // Run the entire update process
 const runUpdateProcess = () => __awaiter(void 0, void 0, void 0, function* () {
     yield getMinerPoints();
     yield runHexGridScript();
     yield convertToMbtiles();
+    console.log("Update process completed successfully.");
+    yield startTileServer();
 });
+// Initial run
 runUpdateProcess();
+// Schedule the update process to run every 10 minutes
+setInterval(runUpdateProcess, 10 * 60 * 1000);
