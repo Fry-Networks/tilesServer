@@ -1,44 +1,4 @@
 {
   "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -1.9804358482360842,
-          48.67163611161282
-        ]
-      },
-      "properties": {
-        "name": "test"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -1.9775390625000002,
-          48.670105719954485
-        ]
-      },
-      "properties": {
-        "name": "$FRY Indoor Wildlife Camera Miner"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -1.9880962371826174,
-          48.665514266085225
-        ]
-      },
-      "properties": {
-        "name": "$FRY High-End Weather Miner"
-      }
-    }
-  ]
+  "features": []
 }
