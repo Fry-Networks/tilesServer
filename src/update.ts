@@ -7,8 +7,6 @@ let tileserverProcess: ChildProcess | null = null;  // To keep track of the tile
 
 // Define the paths for the scripts and files
 const hexGridScript = join(__dirname, "generateGrid.js");
-const geojsonFile = join(__dirname, "hex_grid.geojson");
-const mbtilesFile = join(__dirname, "hex_grid.mbtiles");
 
 // Function to execute a shell command and return it as a Promise
 const execShellCommand = (cmd: string): Promise<string> => {
@@ -64,7 +62,7 @@ const runHexGridScript = async () => {
 const convertToMbtiles = async () => {
     console.log("Converting GeoJSON to MBTiles...");
     try {
-        const result = await execShellCommand(`tippecanoe -o ${mbtilesFile} --force --drop-densest-as-needed --extend-zooms-if-still-dropping --no-tile-size-limit ${geojsonFile}`);
+        const result = await execShellCommand(`tippecanoe -o hex_grid.mbtiles --force --drop-densest-as-needed --extend-zooms-if-still-dropping --no-tile-size-limit hex_grid.geojson`);
         console.log(result);
         const miners = await execShellCommand(`tippecanoe -o miners.mbtiles --force --drop-densest-as-needed --extend-zooms-if-still-dropping --no-tile-size-limit miners.geojson`);
         console.log(miners);
