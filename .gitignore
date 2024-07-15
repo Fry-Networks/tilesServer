@@ -4,3 +4,7 @@ package-lock.json
 *.mbtiles
 *.geojson
 build
+hex_grid.geojson
+hex_grid.mbtiles
+miners.geojson
+miners.mbtiles
