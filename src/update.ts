@@ -83,7 +83,7 @@ const stopTileServer = () => {
 const startTileServer = async () => {
     stopTileServer();  // Stop any previous instance of tileserver-gl
     console.log("Starting tileserver-gl...");
-    tileserverProcess = exec("tileserver-gl config.json", (error, stdout, stderr) => {
+    tileserverProcess = exec("tileserver-gl config.json -p 3018:3018", (error, stdout, stderr) => {
         if (error) {
             console.error(`Error starting tileserver-gl: ${error.message}`);
             return;
