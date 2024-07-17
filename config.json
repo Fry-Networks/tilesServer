@@ -1,19 +1,38 @@
 {
-    "options": {
-      "paths": {
-        "root": "."
-      }
+  "options": {
+    "paths": {
+      "root": "."
+    }
+  },
+  "data": {
+    "miners": {
+      "mbtiles": "miners.mbtiles"
     },
-    "data": {
-      "miners": {
-        "mbtiles": "miners.mbtiles"
-      },
-      "hex_grid": {
-        "mbtiles": "hex_grid.mbtiles"
-      },
-      "map": {
-        "pmtiles": "map.pmtiles"
-      }
+    "hex_grid": {
+      "mbtiles": "hex_grid.mbtiles"
+    },
+    "map": {
+      "pmtiles": "map.pmtiles"
+    }
+  },
+  "layers": {
+    "miners": {
+      "source": "mbtiles://miners.mbtiles",
+      "tiles": [
+        "https://tiles.frynetworks.com/data/miners/{z}/{x}/{y}.pbf"
+      ]
+    },
+    "hex_grid": {
+      "source": "mbtiles://hex_grid.mbtiles",
+      "tiles": [
+        "https://tiles.frynetworks.com/data/hex_grid/{z}/{x}/{y}.pbf"
+      ]
+    },
+    "map": {
+      "source": "pmtiles://map.pmtiles",
+      "tiles": [
+        "https://tiles.frynetworks.com/data/map/{z}/{x}/{y}.pbf"
+      ]
     }
   }
-  
+}
