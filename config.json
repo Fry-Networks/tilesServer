@@ -10,6 +10,9 @@
       },
       "hex_grid": {
         "mbtiles": "hex_grid.mbtiles"
+      },
+      "map": {
+        "pmtiles": "map.pmtiles"
       }
     }
   }

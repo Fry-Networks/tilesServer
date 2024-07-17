@@ -3,6 +3,7 @@ package-lock.json
 .env
 *.mbtiles
 *.geojson
+*.pmtiles
 build
 hex_grid.geojson
 hex_grid.mbtiles
