@@ -79,8 +79,8 @@ const stopTileServer = async () => {
         if (result) {
             const pids = result.trim().split('\n');
             pids.forEach(pid => {
-                execSync(`kill -SIGTERM ${pid}`);
-                console.log(`Sent SIGTERM to process ${pid}`);
+                execSync(`kill ${pid}`);
+                console.log(`Killed process ${pid}`);
             });
         }
     } catch (error) {
