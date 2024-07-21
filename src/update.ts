@@ -110,7 +110,9 @@ const runUpdateProcess = async () => {
     await convertToMbtiles();
     console.log("Update process completed successfully.");
     await stopTileServer(); 
+    console.log("Waiting 2 seconds before starting tileserver-gl...");
     await wait(2000);
+    console.log("Starting tileserver-gl...");
     await startTileServer();
 };
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -124,7 +126,7 @@ const intervalId = setInterval(runUpdateProcess, 1 * 60 * 1000);
 // Handle graceful shutdown
 const shutdown = () => {
     console.log("Shutting down...");
-    clearInterval(intervalId);
+    clearInterval(intervalId);2889172
     stopTileServer().then(() => {
         process.exit(0);
     }).catch(() => {
