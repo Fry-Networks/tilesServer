@@ -77,11 +77,11 @@ const stopTileServer = async () => {
     try {
         const result = await execShellCommand(`pgrep -f "/home/debian/.nvm/versions/node/v18.19.0/bin/tileserver-gl config.json -p 3018"`);
         if (result) {
-            const pids = result.trim().split('\n');
-            pids.forEach(pid => {
+            const pid = result.trim().split('\n')[0]
+
                 execSync(`kill ${pid}`);
                 console.log(`Killed process ${pid}`);
-            });
+      
         }
     } catch (error) {
         console.error("Error stopping tileserver-gl process:", error);
@@ -112,7 +112,6 @@ const runUpdateProcess = async () => {
     await stopTileServer(); 
     console.log("Waiting 2 seconds before starting tileserver-gl...");
     await wait(2000);
-    console.log("Starting tileserver-gl...");
     await startTileServer();
 };
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
