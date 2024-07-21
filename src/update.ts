@@ -89,7 +89,7 @@ const stopTileServer = async () => {
 };
 
 const startTileServer = async () => {
-    await stopTileServer();  // Stop any previous instance of tileserver-gl
+     // Stop any previous instance of tileserver-gl
     console.log("Starting tileserver-gl...");
     tileserverProcess = exec("tileserver-gl config.json -p 3018", (error, stdout, stderr) => {
         if (error) {
@@ -109,8 +109,11 @@ const runUpdateProcess = async () => {
     await runHexGridScript();
     await convertToMbtiles();
     console.log("Update process completed successfully.");
+    await stopTileServer(); 
+    await wait(2000);
     await startTileServer();
 };
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Initial run
 runUpdateProcess();
