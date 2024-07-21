@@ -75,7 +75,7 @@ const convertToMbtiles = async () => {
 const stopTileServer = async () => {
     console.log("Stopping previous tileserver-gl process if running...");
     try {
-        const result = await execShellCommand(`pgrep -f "tileserver-gl config.json -p 3018"`);
+        const result = await execShellCommand(`pgrep -f "/home/debian/.nvm/versions/node/v18.19.0/bin/tileserver-gl config.json -p 3018"`);
         if (result) {
             const pids = result.trim().split('\n');
             pids.forEach(pid => {
