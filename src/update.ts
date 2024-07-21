@@ -72,16 +72,24 @@ const convertToMbtiles = async () => {
     }
 };
 
-const stopTileServer = () => {
-    if (tileserverProcess) {
-        console.log("Stopping previous tileserver-gl process...");
-        tileserverProcess.kill();
-        tileserverProcess = null;
+const stopTileServer = async () => {
+    console.log("Stopping previous tileserver-gl process if running...");
+    try {
+        const result = await execShellCommand(`pgrep -f "tileserver-gl config.json -p 3018"`);
+        if (result) {
+            const pids = result.trim().split('\n');
+            pids.forEach(pid => {
+                execSync(`kill -SIGTERM ${pid}`);
+                console.log(`Sent SIGTERM to process ${pid}`);
+            });
+        }
+    } catch (error) {
+        console.error("Error stopping tileserver-gl process:", error);
     }
 };
 
 const startTileServer = async () => {
-    stopTileServer();  // Stop any previous instance of tileserver-gl
+    await stopTileServer();  // Stop any previous instance of tileserver-gl
     console.log("Starting tileserver-gl...");
     tileserverProcess = exec("tileserver-gl config.json -p 3018", (error, stdout, stderr) => {
         if (error) {
@@ -108,14 +116,17 @@ const runUpdateProcess = async () => {
 runUpdateProcess();
 
 // Schedule the update process to run every 10 minutes
-const intervalId = setInterval(runUpdateProcess, 10 * 60 * 1000);
+const intervalId = setInterval(runUpdateProcess, 1 * 60 * 1000);
 
 // Handle graceful shutdown
 const shutdown = () => {
     console.log("Shutting down...");
     clearInterval(intervalId);
-    stopTileServer();
-    process.exit(0);
+    stopTileServer().then(() => {
+        process.exit(0);
+    }).catch(() => {
+        process.exit(1);
+    });
 };
 
 process.on("SIGINT", shutdown);
