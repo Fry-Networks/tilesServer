@@ -118,23 +118,6 @@ const runUpdateProcess = async () => {
     await startTileServer();
 };
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-// Initial run
-runUpdateProcess();
-
 // Schedule the update process to run every 10 minutes
-const intervalId = setInterval(runUpdateProcess, 1 * 60 * 1000);
+setInterval(runUpdateProcess, 1 * 60 * 1000);
 
-// Handle graceful shutdown
-const shutdown = () => {
-    console.log("Shutting down...");
-    clearInterval(intervalId);2889172
-    stopTileServer().then(() => {
-        process.exit(0);
-    }).catch(() => {
-        process.exit(1);
-    });
-};
-
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
