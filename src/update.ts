@@ -77,12 +77,15 @@ const stopTileServer = async () => {
     try {
         const result = await execShellCommand(`pgrep -f "/home/debian/.nvm/versions/node/v18.19.0/bin/tileserver-gl config.json -p 3018"`);
         if (result) {
+            console.log("Tileserver-gl process found. Stopping it...");
+            
             const pid = result.trim().split('\n')[0]
 
                 execSync(`kill ${pid}`);
                 console.log(`Killed process ${pid}`);
       
         }
+        console.log("No tileserver-gl process found.");
     } catch (error) {
         console.error("Error stopping tileserver-gl process:", error);
     }
