@@ -62,9 +62,9 @@ const runHexGridScript = async () => {
 const convertToMbtiles = async () => {
     console.log("Converting GeoJSON to MBTiles...");
     try {
-        const result = await execShellCommand(`tippecanoe -o hex_grid.mbtiles --force --drop-densest-as-needed --maximum-zoom=14 --minimum-zoom=0 --extend-zooms-if-still-dropping --no-tile-size-limit hex_grid.geojson`);
+        const result = await execShellCommand(`tippecanoe -o hex_grid.mbtiles --force -B1 --drop-densest-as-needed --maximum-zoom=14 --minimum-zoom=0 --extend-zooms-if-still-dropping --no-tile-size-limit hex_grid.geojson`);
         console.log(result);
-        const miners = await execShellCommand(`tippecanoe -o miners.mbtiles --force --drop-densest-as-needed --maximum-zoom=14 --minimum-zoom=0 --extend-zooms-if-still-dropping --no-tile-size-limit miners.geojson`);
+        const miners = await execShellCommand(`tippecanoe -o miners.mbtiles --force -B1 --drop-densest-as-needed --maximum-zoom=14 --minimum-zoom=0 --extend-zooms-if-still-dropping --no-tile-size-limit miners.geojson`);
         console.log(miners);
         console.log("MBTiles file created successfully.");
     } catch (error) {
@@ -118,6 +118,23 @@ const runUpdateProcess = async () => {
     await startTileServer();
 };
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-// Schedule the update process to run every 10 minutes
-setInterval(runUpdateProcess, 1 * 60 * 1000);
 
+// Initial run
+runUpdateProcess();
+
+// Schedule the update process to run every 10 minutes
+const intervalId = setInterval(runUpdateProcess, 1 * 60 * 1000);
+
+// Handle graceful shutdown
+const shutdown = () => {
+    console.log("Shutting down...");
+    clearInterval(intervalId);
+    stopTileServer().then(() => {
+        process.exit(0);
+    }).catch(() => {
+        process.exit(1);
+    });
+};
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
