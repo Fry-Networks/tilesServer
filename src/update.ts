@@ -123,7 +123,7 @@ const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 runUpdateProcess();
 
 // Schedule the update process to run every 10 minutes
-const intervalId = setInterval(runUpdateProcess, 1 * 60 * 1000);
+const intervalId = setInterval(runUpdateProcess, 10 * 60 * 1000);
 
 // Handle graceful shutdown
 const shutdown = () => {
